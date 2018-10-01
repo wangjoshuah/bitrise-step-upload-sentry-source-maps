@@ -1,19 +1,33 @@
 #!/bin/bash
 set -ex
 
-echo "This is the value specified for the input 'example_step_input': ${example_step_input}"
+# Validate Parameters
+if [ -z "${plist_path}" ] ; then
+    echo " [!] Missing required input: plist_path"
+    exit 1
+fi
+if [ ! -f "${plist_path}" ] ; then
+    echo " [!] Plist file doesn't exist at specified Info.plist path: ${plist_path}"
+    exit 2
+fi
+if [ -z "${build_version}" ] ; then
+    echo " [!] No build_version specified!"
+    exit 3
+fi
 
-#
-# --- Export Environment Variables for other Steps:
-# You can export Environment Variables for other Steps with
-#  envman, which is automatically installed by `bitrise setup`.
-# A very simple example:
-envman add --key EXAMPLE_STEP_OUTPUT --value 'the value you want to share'
-# Envman can handle piped inputs, which is useful if the text you want to
-# share is complex and you don't want to deal with proper bash escaping:
-#  cat file_with_complex_input | envman add --KEY EXAMPLE_STEP_OUTPUT
-# You can find more usage examples on envman's GitHub page
-#  at: https://github.com/bitrise-io/envman
+$RELEASE_NAME = ${APP_NAME}-${APP_VERSION}
+
+node node_modules/react-native/local-cli/cli.js bundle \
+    --platform ios \
+    --entry-file index.js \
+    --dev false \
+    --bundle-output "${TMP_DIR}/main.jsbundle" \
+    --sourcemap-output "${TMP_DIR}/main.jsbundle.map"
+
+node_modules/@sentry/cli/bin/sentry-cli releases files $RELEASE_NAME upload-sourcemaps \
+    --dist $BITRISE_BUILD_NUMBER \
+    --rewrite "${TMP_DIR}/main.jsbundle.map" "${TMP_DIR}/main.jsbundle"
+
 
 #
 # --- Exit codes:

@@ -13,9 +13,9 @@ summary: |
   Upload your source maps to Sentry.io
 description: |
   Make it easier to debug by uploading source maps to sentry.io
-website: null
-source_code_url: null
-support_url: null
+website: https://github.com/wangjoshuah/bitrise-step-upload-sentry-source-maps
+source_code_url: https://github.com/wangjoshuah/bitrise-step-upload-sentry-source-maps
+support_url: https://github.com/wangjoshuah/bitrise-step-upload-sentry-source-maps/issues
 host_os_tags:
   - osx-10.10
   - ubuntu-16.04
@@ -75,6 +75,7 @@ inputs:
       is_expand: true
       is_required: true
       value_options: []
+  - plist_path: somepath
 
 outputs:
   - EXAMPLE_STEP_OUTPUT:
